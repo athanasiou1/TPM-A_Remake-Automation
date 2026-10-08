@@ -1,0 +1,173 @@
+﻿FUNCTION_BLOCK "FB_Control"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      in_EmergencyStopHiPo : Bool;   // Output Status From Safety Relay, 1=OK
+      in_EmergencyStop : Bool;   // Inputs to the Safety Relay
+      in_ResetButton : Bool;   // Reset Button
+      in_AutoSwitch : Bool;   // Manual - Auto Selection Switch
+      in_StartButton : Bool;   // Start Button
+      in_StopButton : Bool;   // Stop Button
+      in_RobotTechMode : Bool;   // Robot in Teach Mode bit from COM
+      in_ServoIsOn : Bool;   // Robot Servo Is ON
+      in_GateLocked : Bool;   // Feedback From Lock
+      Blink : Bool;   // Blink Memory
+   END_VAR
+
+   VAR_OUTPUT 
+      ResetAlarms : Bool;   // Rest Alarms, use this bit in main program to reset alarms
+      ResetCycles : Bool;   // Reset All Cycles
+      out_LedGreen : Bool;   // Led Green
+      out_LedOrange : Bool;   // Led Orange
+      out_LedBlue : Bool;   // Led Blue
+      out_GateLock : Bool;   // Comand To Lock Gate
+      out_GateLedStast : Bool;   // Gate Green LED
+      out_GateLedStop : Bool;   // Gate Orange LED
+      out_RobotServoON : Bool;   // Robot External Servo ON
+      out_RobotExternalStart : Bool;   // Robot External Start
+      out_RobotExternalHold : Bool;   // Robot External Hold
+      out_RobotAlarmReset : Bool;   // Robot Alarm Reset
+      CurrentMachineState : Int;   // Current Machine State for use in HMI
+   END_VAR
+
+   VAR_IN_OUT 
+      EmergencyStop : Bool;   // General Emergency Stop
+      ManualMode : Bool;   // Manual Mode Selected
+      AutoMode : Bool;   // Auto Mode Selected
+      AutoStarted : Bool;   // Auto Operation Started
+   END_VAR
+
+   VAR 
+      T_ResetAlarms {InstructionName := 'TP_TIME'; LibVersion := '1.0'} : TP_TIME;
+      T_ResetCycles {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+   END_VAR
+
+   VAR CONSTANT 
+      STOPPED : Int := 1;
+      MANUAL : Int := 2;
+      PRODUCTION : Int := 3;
+      TEACHMODE : Int := 4;
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// GIZELIS ROBOTICS
+	// (C) 2022
+	// =============================================================================
+	// Project: Lib
+	// Module: 
+	// POU: FB_Control (FB)
+	// -----------------------------------------------------------------------------
+	// General Control Bits Managements
+	// The FB returns 5 Memory outputs
+	// -> Reset Alarms for use in main program to reset all the system alarms
+	// -> Emergency Stop for use in main program 
+	// -> Manual Mode for use in main program to control the system outputs manualy
+	// -> Auto Mode waits for system start
+	// -> Auto Started for use in main program, automatic program executed
+	// The FB also control the status LEDs
+	// -----------------------------------------------------------------------------
+	// Date         Version             Modification
+	// 12.05.22     1                   Created
+	// 20.10.22     2                   Control Gate Lock and Leds
+	// 20.10.22     3                   Robot Control (Servo On - External Start - External Hold - Alarm Reset)
+	// =============================================================================
+	// 
+	
+	REGION RESET ALARMS
+	    //Reset Alarms
+	    #T_ResetAlarms(IN := #in_ResetButton,
+	                   PT := T#2s,
+	                   Q => #ResetAlarms);
+	END_REGION
+	
+	REGION EMERGENCY STOP
+	    IF NOT #in_EmergencyStopHiPo THEN
+	        #EmergencyStop := TRUE;
+	    END_IF;
+	    
+	    IF #in_ResetButton THEN
+	        #EmergencyStop := FALSE;
+	    END_IF;
+	END_REGION
+	
+	REGION AUTO MODE
+	    //Auto Mode Selection
+	    IF #in_AutoSwitch THEN
+	        #ManualMode := FALSE;
+	        #AutoMode := TRUE;
+	    ELSE
+	        #ManualMode := TRUE;
+	        #AutoMode := FALSE;
+	    END_IF;
+	    
+	    //Auto Started
+	    IF #in_StartButton THEN
+	        #AutoStarted := TRUE;
+	    END_IF;
+	    IF #in_StopButton OR #ManualMode OR #EmergencyStop OR NOT #in_GateLocked THEN
+	        #AutoStarted := FALSE;
+	    END_IF;
+	END_REGION
+	
+	REGION LED CONTROL
+	    //Blue Led Reset 
+	    //Blink is emergency inputs is ok but not reset and ON if safety relay is OK
+	    #out_LedBlue := ((#Blink AND #in_EmergencyStop) OR NOT #EmergencyStop) OR #ResetCycles;
+	    
+	    //Green Led Start
+	    //ON if Auto started or Blink if Auto mode selected but not started 
+	    #out_LedGreen := (NOT #EmergencyStop AND (#AutoStarted OR (#Blink AND #AutoMode))) OR #ResetCycles;
+	    
+	    //Orange Led Stop in manual mode
+	    #out_LedOrange := (NOT #EmergencyStop AND #ManualMode) OR #ResetCycles;
+	END_REGION
+	
+	REGION RESET CYCLES
+	    IF #ManualMode THEN
+	        #T_ResetCycles(IN := #in_ResetButton,
+	                       PT := T#3s);
+	        #ResetCycles := #T_ResetCycles.Q;
+	    END_IF;
+	END_REGION
+	
+	REGION MACHINE STATE
+	    //Current machine state for use in HMI
+	    //Manual
+	    IF #ManualMode THEN
+	        #CurrentMachineState := #MANUAL;
+	    END_IF;
+	    //Production
+	    IF #AutoStarted THEN
+	        #CurrentMachineState := #PRODUCTION;
+	    END_IF;
+	    //Robot in Teach Mode
+	    IF #in_RobotTechMode THEN
+	        #CurrentMachineState := #TEACHMODE;
+	    END_IF;
+	    //Stopped
+	    IF #EmergencyStop OR (#AutoMode AND NOT #AutoStarted) THEN
+	        #CurrentMachineState := #STOPPED;
+	    END_IF;
+	END_REGION
+	
+	REGION GATE CONTROL
+	    IF #in_StartButton THEN
+	        #out_GateLock := TRUE;
+	    END_IF;
+	    IF #in_StopButton OR #EmergencyStop THEN
+	        #out_GateLock := FALSE;
+	    END_IF;
+	    #out_GateLedStast := #out_LedGreen;
+	    #out_GateLedStop := #out_LedOrange OR (NOT #in_GateLocked AND #Blink);
+	END_REGION
+	
+	REGION ROBOT CONTROL
+	    #out_RobotServoON := #AutoStarted;
+	    #out_RobotExternalStart := #in_ServoIsOn AND #in_StartButton;
+	    #out_RobotExternalHold := #in_StopButton ;
+	    #out_RobotAlarmReset := #ResetAlarms;
+	END_REGION
+END_FUNCTION_BLOCK
+

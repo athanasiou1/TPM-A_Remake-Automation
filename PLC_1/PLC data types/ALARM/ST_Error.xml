@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V19" />
+  <SW.Types.PlcStruct ID="0">
+    <AttributeList>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v5">
+  <Section Name="None">
+    <Member Name="Bit:0" Datatype="Bool" />
+    <Member Name="Bit:1" Datatype="Bool" />
+    <Member Name="Bit:2" Datatype="Bool" />
+    <Member Name="Bit:3" Datatype="Bool" />
+    <Member Name="Bit:4" Datatype="Bool" />
+    <Member Name="Bit:5" Datatype="Bool" />
+    <Member Name="Bit:6" Datatype="Bool" />
+    <Member Name="Bit:7" Datatype="Bool" />
+    <Member Name="Bit:8" Datatype="Bool" />
+    <Member Name="Bit:9" Datatype="Bool" />
+    <Member Name="Bit:10" Datatype="Bool" />
+    <Member Name="Bit:11" Datatype="Bool" />
+    <Member Name="Bit:12" Datatype="Bool" />
+    <Member Name="Bit:13" Datatype="Bool" />
+    <Member Name="Bit:14" Datatype="Bool" />
+    <Member Name="Bit:15" Datatype="Bool" />
+    <Member Name="Bit:16" Datatype="Bool" />
+    <Member Name="Bit:17" Datatype="Bool" />
+    <Member Name="Bit:18" Datatype="Bool" />
+    <Member Name="Bit:19" Datatype="Bool" />
+    <Member Name="Bit:20" Datatype="Bool" />
+    <Member Name="Bit:21" Datatype="Bool" />
+    <Member Name="Bit:22" Datatype="Bool" />
+    <Member Name="Bit:23" Datatype="Bool" />
+    <Member Name="Bit:24" Datatype="Bool" />
+    <Member Name="Bit:25" Datatype="Bool" />
+    <Member Name="Bit:26" Datatype="Bool" />
+    <Member Name="Bit:27" Datatype="Bool" />
+    <Member Name="Bit:28" Datatype="Bool" />
+    <Member Name="Bit:29" Datatype="Bool" />
+    <Member Name="Bit:30" Datatype="Bool" />
+    <Member Name="Bit:31" Datatype="Bool" />
+    <Member Name="Bit:32" Datatype="Bool" />
+  </Section>
+</Sections></Interface>
+      <Name>ST_Error</Name>
+      <Namespace />
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <MultilingualText ID="3" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="4" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Types.PlcStruct>
+</Document>

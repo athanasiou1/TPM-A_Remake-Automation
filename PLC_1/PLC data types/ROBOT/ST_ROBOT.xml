@@ -1,0 +1,540 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V19" />
+  <SW.Types.PlcStruct ID="0">
+    <AttributeList>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v5">
+  <Section Name="None">
+    <Member Name="SEND" Datatype="Struct">
+      <Comment>
+        <MultiLanguageText Lang="en-US">PLC -&gt; ROBOT</MultiLanguageText>
+      </Comment>
+      <Member Name="USER_BITS" Datatype="&quot;ST_USER_BITS_SEND&quot;" />
+      <Member Name="EXTERNALSTART" Datatype="Bool" />
+      <Member Name="EXTERNALHOLD" Datatype="Bool" />
+      <Member Name="CALLMASTERJOB" Datatype="Bool" />
+      <Member Name="ALARMRESET" Datatype="Bool" />
+      <Member Name="EXTERNALSERVOON" Datatype="Bool" />
+      <Member Name="REDUCESPEED" Datatype="Bool" />
+      <Member Name="EDITLOCK" Datatype="Bool" />
+      <Member Name="LOWAIRPRESSURE" Datatype="Bool" />
+      <Member Name="BUZZER" Datatype="Bool" />
+      <Member Name="WATCHDOG" Datatype="Bool" />
+      <Member Name="MACHINELOCK" Datatype="Bool" />
+      <Member Name="NOT-USED" Datatype="Bool" />
+      <Member Name="CMD" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">I10</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="CMD_ID" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">I11</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="X" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">I12 (X, mm)</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="Y" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">I13 (Y, mm)</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="Z" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">I14 (Z, mm)</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="Rx" Datatype="Int" />
+      <Member Name="Ry" Datatype="Int" />
+      <Member Name="Rz" Datatype="Int" />
+      <Member Name="PARAM_1" Datatype="Int" />
+      <Member Name="PARAM_2" Datatype="Int" />
+      <Member Name="PARAM_3" Datatype="Int" />
+      <Member Name="PARAM_4" Datatype="Int" />
+      <Member Name="PARAM_5" Datatype="Int" />
+      <Member Name="PARAM_6" Datatype="Int" />
+      <Member Name="PARAM_7" Datatype="Int" />
+      <Member Name="PARAM_8" Datatype="Int" />
+      <Member Name="PARAM_9" Datatype="Int" />
+      <Member Name="FUNCTION_ID" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">Debug only, not send to the robot Additional system signals from the supplied mapping.</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INVALIDCOLLISIONDETECT" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 1, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="CONTINUOUSCYCLESELECT" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 1, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="ONECYCLESELECT" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 1, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="AUTOBACKUP" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 1, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WORKPROHIBIT_R1" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 2, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WORKPROHIBIT_R2" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 2, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WORKPROHIBIT_R3" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 2, bit 2</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WORKPROHIBIT_R4" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 2, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WORKPROHIBIT_R5" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 2, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WORKPROHIBIT_R6" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 2, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WORKPROHIBIT_R7" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 2, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WORKPROHIBIT_R8" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 2, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_R1" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 3, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_R2" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 3, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_R3" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 3, bit 2</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_R4" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 3, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_R5" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 3, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_R6" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 3, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_R7" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 3, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_R8" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 3, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_S1" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 4, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_S2" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 4, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_S3" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 4, bit 2</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_S4" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 4, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_S5" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 4, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_S6" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 4, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_S7" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 4, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SEQUENCEWAIT_S8" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 4, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="STEPBACK_R1" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 5, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="STEPBACK_R2" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 5, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="STEPBACK_R3" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 5, bit 2</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="STEPBACK_R4" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 5, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="STEPBACK_R5" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 5, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="STEPBACK_R6" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 5, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="STEPBACK_R7" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 5, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="STEPBACK_R8" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">SEND byte 5, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="PARAM_10" Datatype="Int" />
+      <Member Name="PARAM_11" Datatype="Int" />
+      <Member Name="PARAM_12" Datatype="Int" />
+      <Member Name="PARAM_13" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">Retained for compatibility; not transmitted in this layout.</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="PARAM_BYTE_62" Datatype="Byte">
+        <Comment>
+          <MultiLanguageText Lang="en-US">Byte 62 only; one-byte parameter (0..255).</MultiLanguageText>
+        </Comment>
+      </Member>
+    </Member>
+    <Member Name="RECEIVE" Datatype="Struct">
+      <Comment>
+        <MultiLanguageText Lang="en-US">ROBOT -&gt; PLC</MultiLanguageText>
+      </Comment>
+      <Member Name="USER_BITS" Datatype="&quot;ST_USER_BITS_RECIEVE&quot;" />
+      <Member Name="RUNNING" Datatype="Bool" />
+      <Member Name="SERVOISON" Datatype="Bool" />
+      <Member Name="TOPMASTERJOB" Datatype="Bool" />
+      <Member Name="ALARM" Datatype="Bool" />
+      <Member Name="HOLD" Datatype="Bool" />
+      <Member Name="REMOTEMODE" Datatype="Bool" />
+      <Member Name="PLAYMODE" Datatype="Bool" />
+      <Member Name="TEACHMODE" Datatype="Bool" />
+      <Member Name="ROBOTCOLLISION" Datatype="Bool" />
+      <Member Name="REDUCEDSPEED" Datatype="Bool" />
+      <Member Name="NOT-USED" Datatype="Bool" />
+      <Member Name="ACT_CMDID" Datatype="Int" />
+      <Member Name="ACT_X" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">mm</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="ACT_Y" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">mm</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="ACT_Z" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">mm</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="ACT_Rz" Datatype="Int" />
+      <Member Name="PARAM_1" Datatype="Int" />
+      <Member Name="PARAM_2" Datatype="Int" />
+      <Member Name="PARAM_3" Datatype="Int" />
+      <Member Name="PARAM_4" Datatype="Int" />
+      <Member Name="PARAM_5" Datatype="Int" />
+      <Member Name="PARAM_6" Datatype="Int" />
+      <Member Name="PARAM_7" Datatype="Int" />
+      <Member Name="PARAM_8" Datatype="Int" />
+      <Member Name="PARAM_9" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">Additional system signals from the supplied mapping.</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="BATTERYALARM" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 1, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="WATCHDOG" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 1, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="CONTINUOUSCYCLESELECT" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 1, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="ONECYCLESELECT" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 1, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="DIALOGDISPLAYATSTART" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 1, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="ENERGYSAVING" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 1, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="MAJORALARM" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 2, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="MINORALARM" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 2, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SYSTEMALARM" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 2, bit 2</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="USERALARM" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 2, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SAFETYPLUGINPUT" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 2, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="EXTERNALEMERGENCYSTOP" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 2, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="TEACHBOXEMERGENCYSTOP" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 2, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="EXTERNALHOLD" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 2, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SHOCKDETECTION_R1" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 3, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SHOCKDETECTION_R2" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 3, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SHOCKDETECTION_R3" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 3, bit 2</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SHOCKDETECTION_R4" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 3, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SHOCKDETECTION_R5" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 3, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SHOCKDETECTION_R6" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 3, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SHOCKDETECTION_R7" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 3, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="SHOCKDETECTION_R8" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 3, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_1" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 4, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_2" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 4, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_3" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 4, bit 2</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_4" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 4, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_5" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 4, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_6" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 4, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_7" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 4, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_8" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 4, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_9" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 5, bit 0</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_10" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 5, bit 1</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_11" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 5, bit 2</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_12" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 5, bit 3</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_13" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 5, bit 4</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_14" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 5, bit 5</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_15" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 5, bit 6</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="INCUBE_16" Datatype="Bool">
+        <Comment>
+          <MultiLanguageText Lang="en-US">RECEIVE byte 5, bit 7</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="PARAM_10" Datatype="Int" />
+      <Member Name="PARAM_11" Datatype="Int" />
+      <Member Name="PARAM_12" Datatype="Int" />
+      <Member Name="PARAM_13" Datatype="Int" />
+      <Member Name="PARAM_14" Datatype="Int">
+        <Comment>
+          <MultiLanguageText Lang="en-US">Retained for compatibility; not transmitted in this layout.</MultiLanguageText>
+        </Comment>
+      </Member>
+      <Member Name="PARAM_BYTE_62" Datatype="Byte">
+        <Comment>
+          <MultiLanguageText Lang="en-US">Byte 62 only; one-byte parameter (0..255).</MultiLanguageText>
+        </Comment>
+      </Member>
+    </Member>
+  </Section>
+</Sections></Interface>
+      <Name>ST_ROBOT</Name>
+      <Namespace />
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <MultilingualText ID="3" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="4" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Types.PlcStruct>
+</Document>

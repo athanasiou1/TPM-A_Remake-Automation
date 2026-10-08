@@ -1,0 +1,86 @@
+﻿FUNCTION_BLOCK "FB_REER_M1S"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      InputBytes : "ST_REER_INPUT_BYTE";
+   END_VAR
+
+   VAR_OUTPUT 
+      InputBits : "ST_REER_INPUT";
+   END_VAR
+
+   VAR 
+      i : Int;
+      j : Int;
+   END_VAR
+
+
+BEGIN
+	// =========================================================================
+	// Octopus Automation (C) 2026
+	// =========================================================================
+	// Project: TPM-A-1
+	// POU: REER M1S
+	// Author: A.M
+	// -------------------------------------------------------------------------
+	// Date             Version                 Modification
+	// ..               ProjectName             Created
+	// =========================================================================
+	
+	
+	FOR #i := 0 TO 32 DO 
+	    #InputBits.INPUT[#i].INPUT_BYTE.Bit_0 := #InputBytes.INPUT[#i].%X0;
+	    #InputBits.INPUT[#i].INPUT_BYTE.Bit_1 := #InputBytes.INPUT[#i].%X1;
+	    #InputBits.INPUT[#i].INPUT_BYTE.Bit_2 := #InputBytes.INPUT[#i].%X2;
+	    #InputBits.INPUT[#i].INPUT_BYTE.Bit_3 := #InputBytes.INPUT[#i].%X3;
+	    #InputBits.INPUT[#i].INPUT_BYTE.Bit_4 := #InputBytes.INPUT[#i].%X4;
+	    #InputBits.INPUT[#i].INPUT_BYTE.Bit_5 := #InputBytes.INPUT[#i].%X5;
+	    #InputBits.INPUT[#i].INPUT_BYTE.Bit_6 := #InputBytes.INPUT[#i].%X6;
+	    #InputBits.INPUT[#i].INPUT_BYTE.Bit_7 := #InputBytes.INPUT[#i].%X7;
+	
+	END_FOR;
+	
+	
+	"SAFETY".SAF.EMG.EMG_General :=  "SAFETY".SAF.EMG.EMG_ControlPanel AND "SAFETY".SAF.EMG.EMG_Robot_1 AND "SAFETY".SAF.EMG.EMG_Robot_2 AND "SAFETY".SAF.EMG.EMG_Robot_3;
+	"SAFETY".SAF.EMG.EMG_BT := #InputBytes.INPUT[3].%X2;
+	"SAFETY".SAF.EMG.EMG_ControlPanel := #InputBytes.INPUT[2].%X0;
+	"SAFETY".SAF.EMG.EMG_Robot_1 := #InputBytes.INPUT[2].%X3;
+	"SAFETY".SAF.EMG.EMG_Robot_2 := #InputBytes.INPUT[4].%X0;
+	"SAFETY".SAF.EMG.EMG_Robot_3 := #InputBytes.INPUT[4].%X4;
+	
+	"SAFETY".SAF.ZONE.SafetyZone_1 := #InputBytes.INPUT[29].%X0;
+	"SAFETY".SAF.ZONE.SafetyZone_2 := #InputBytes.INPUT[29].%X1;
+	"SAFETY".SAF.ZONE.SafetyZone_3 := #InputBytes.INPUT[29].%X2;
+	"SAFETY".SAF.ZONE.SafetyZone_4 := #InputBytes.INPUT[29].%X3;
+	
+	"SAFETY".SAF.DOOR.SafetyDoor_1 := #InputBytes.INPUT[3].%X0;
+	"SAFETY".SAF.DOOR.SafetyDoor_2 := #InputBytes.INPUT[3].%X2;
+	"SAFETY".SAF.DOOR.SafetyDoor_3 := #InputBytes.INPUT[3].%X6;
+	"SAFETY".SAF.DOOR.SafetyDoor_4 := #InputBytes.INPUT[3].%X2;
+	"SAFETY".SAF.DOOR.SafetyDoor_5 := #InputBytes.INPUT[3].%X6;
+	"SAFETY".SAF.DOOR.SafetyDoor_6 := #InputBytes.INPUT[4].%X2;
+	"SAFETY".SAF.DOOR.SafetyDoor_7 := #InputBytes.INPUT[4].%X6;
+	"SAFETY".SAF.DOOR.SafetyDoor_8 := #InputBytes.INPUT[4].%X2;
+	"SAFETY".SAF.DOOR.SafetyDoor_9 := #InputBytes.INPUT[4].%X6;
+	"SAFETY".SAF.DOOR.SafetyDoor_10 := #InputBytes.INPUT[4].%X2;
+	
+	//All Safety door  includet
+	"SAFETY".SAF.DOOR.SafetyDoors_Locked :="SAFETY".SAF.DOOR.SafetyDoor_1 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_2 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_3 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_4 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_5 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_6 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_7 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_8 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_9 AND
+	"SAFETY".SAF.DOOR.SafetyDoor_10;
+	
+	
+	
+	
+	
+	
+	    
+END_FUNCTION_BLOCK
+

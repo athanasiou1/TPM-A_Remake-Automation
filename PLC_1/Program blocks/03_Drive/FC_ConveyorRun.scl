@@ -1,0 +1,38 @@
+﻿FUNCTION "FC_ConveyorRun" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      id : Int;
+   END_VAR
+
+   VAR_TEMP 
+      mmps : Real;
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// OCTOPUS AUTOMATION
+	// (C) 2026
+	// =============================================================================
+	// Project: TPM_A-1
+	// Module: -
+	// 
+	// POU: FC_ConveyorRun
+	// -----------------------------------------------------------------------------
+	// Run conveyor at a velocity defined in RVL
+	// -----------------------------------------------------------------------------
+	// Date         Version             Author      Modification
+	// 21.09.26     TMP_A-1             A.M         Created
+	// =============================================================================
+	
+	IF #id < 1 OR #id >10 THEN
+	    RETURN;
+	END_IF;
+	
+	#mmps := "RVL".ConveyorVelocity[#id];
+	"FC_ConveyorCtrl"(id := #id,
+	                  mmps := #mmps);
+	
+END_FUNCTION
+

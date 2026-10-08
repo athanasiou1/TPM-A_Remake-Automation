@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V19" />
+  <SW.Blocks.InstanceDB ID="0">
+    <AttributeList>
+      <InstanceOfName>FB_Control</InstanceOfName>
+      <InstanceOfType>FB</InstanceOfType>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v5">
+  <Section Name="Input">
+    <Member Name="in_EmergencyStopHiPo" Datatype="Bool" />
+    <Member Name="in_EmergencyStop" Datatype="Bool" />
+    <Member Name="in_ResetButton" Datatype="Bool" />
+    <Member Name="in_AutoSwitch" Datatype="Bool" />
+    <Member Name="in_StartButton" Datatype="Bool" />
+    <Member Name="in_StopButton" Datatype="Bool" />
+    <Member Name="in_RobotTechMode" Datatype="Bool" />
+    <Member Name="in_ServoIsOn" Datatype="Bool" />
+    <Member Name="in_GateLocked" Datatype="Bool" />
+    <Member Name="Blink" Datatype="Bool" />
+  </Section>
+  <Section Name="Output">
+    <Member Name="ResetAlarms" Datatype="Bool" />
+    <Member Name="ResetCycles" Datatype="Bool" />
+    <Member Name="out_LedGreen" Datatype="Bool" />
+    <Member Name="out_LedOrange" Datatype="Bool" />
+    <Member Name="out_LedBlue" Datatype="Bool" />
+    <Member Name="out_GateLock" Datatype="Bool" />
+    <Member Name="out_GateLedStast" Datatype="Bool" />
+    <Member Name="out_GateLedStop" Datatype="Bool" />
+    <Member Name="out_RobotServoON" Datatype="Bool" />
+    <Member Name="out_RobotExternalStart" Datatype="Bool" />
+    <Member Name="out_RobotExternalHold" Datatype="Bool" />
+    <Member Name="out_RobotAlarmReset" Datatype="Bool" />
+    <Member Name="CurrentMachineState" Datatype="Int" />
+  </Section>
+  <Section Name="InOut">
+    <Member Name="EmergencyStop" Datatype="Bool" />
+    <Member Name="ManualMode" Datatype="Bool" />
+    <Member Name="AutoMode" Datatype="Bool" />
+    <Member Name="AutoStarted" Datatype="Bool" />
+  </Section>
+  <Section Name="Static">
+    <Member Name="T_ResetAlarms" Datatype="TP_TIME" Version="1.0">
+      <AttributeList>
+        <BooleanAttribute Name="SetPoint" SystemDefined="true">true</BooleanAttribute>
+      </AttributeList>
+    </Member>
+    <Member Name="T_ResetCycles" Datatype="TON_TIME" Version="1.0">
+      <AttributeList>
+        <BooleanAttribute Name="SetPoint" SystemDefined="true">true</BooleanAttribute>
+      </AttributeList>
+    </Member>
+  </Section>
+</Sections></Interface>
+      <Name>iFB_Control</Name>
+      <Namespace />
+      <Number>21</Number>
+      <ProgrammingLanguage>DB</ProgrammingLanguage>
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <MultilingualText ID="3" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="4" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Blocks.InstanceDB>
+</Document>

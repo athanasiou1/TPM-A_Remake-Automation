@@ -1,0 +1,92 @@
+﻿ORGANIZATION_BLOCK "Main"
+TITLE = "Main Program Sweep (Cycle)"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      xStart : Bool;
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// OCTOPUS AUTOMATION
+	// (C) 2026
+	// =============================================================================
+	// Project: TPM_A-1
+	// Module: -
+	// 
+	// POU: MAIN
+	// -----------------------------------------------------------------------------
+	// Date         Version             Author      Modification
+	// 21.09.26     TMP_A-1             A.M         Created
+	// =============================================================================
+	
+	
+	
+	"iFB_Conveyor_Test"();
+	"FC_R1_COM"("GVL".Robot[1]);
+	"FC_R2_COM"("GVL".Robot[2]);
+	"FC_R3_COM"("GVL".Robot[3]);
+	
+	//Auto Mode 
+	"iFB_AutoMode"(Enable:=FALSE,
+	               Servo:="GVL".Servo,
+	               Robot:="GVL".Robot,
+	               In_Safety:="SAFETY".SAF.ZONE.SafetyZone_1);
+	(*
+	
+	"iFB_Control"(in_StartButton:="DI_CP_Start",
+	              in_StopButton:="DI_CP_Stop",
+	              in_RobotTechMode:="GVL".Robot[1].RECEIVE.TEACHMODE OR "GVL".Robot[2].RECEIVE.TEACHMODE OR "GVL".Robot[3].RECEIVE.TEACHMODE    ,
+	              in_ServoIsOn:="GVL".Robot[1].RECEIVE.SERVOISON AND "GVL".Robot[2].RECEIVE.SERVOISON AND "GVL".Robot[3].RECEIVE.SERVOISON  ,
+	              out_LedGreen=>"DQ_BT_Green",
+	              out_LedOrange=>"DQ_BT_Orange",
+	              out_LedBlue=>"DQ_BT_Red",
+	              in_AutoSwitch:=  "DI_CP_Auto",
+	              in_EmergencyStopHiPo:="SAFETY".SAF.ZONE.SafetyZone_1,
+	              in_EmergencyStop:="SAFETY".SAF.ZONE.SafetyZone_1,
+	              in_GateLocked:="SAFETY".SAF.DOOR.SafetyDoors_Locked,
+	              in_ResetButton:="DI_CP_Reset") ; *)
+	//Robot Servo On
+	//-------------------------------------------------------------------
+	"GVL".Robot[1].SEND.EXTERNALSERVOON := "iFB_Control".out_RobotServoON;
+	"GVL".Robot[2].SEND.EXTERNALSERVOON := "iFB_Control".out_RobotServoON;
+	"GVL".Robot[3].SEND.EXTERNALSERVOON := "iFB_Control".out_RobotServoON;
+	
+	//Robot ExternalStart On
+	//-------------------------------------------------------------------
+	"GVL".Robot[1].SEND.EXTERNALSTART := "iFB_Control".out_RobotExternalStart;
+	"GVL".Robot[2].SEND.EXTERNALSTART := "iFB_Control".out_RobotExternalStart;
+	"GVL".Robot[3].SEND.EXTERNALSTART := "iFB_Control".out_RobotExternalStart;
+	
+	//Robot ExternaHold On
+	//-------------------------------------------------------------------
+	"GVL".Robot[1].SEND.EXTERNALHOLD := "iFB_Control".out_RobotExternalHold;
+	"GVL".Robot[2].SEND.EXTERNALHOLD := "iFB_Control".out_RobotExternalHold;
+	"GVL".Robot[3].SEND.EXTERNALHOLD := "iFB_Control".out_RobotExternalHold;
+	
+	//Robot Alarm Reset On
+	//-------------------------------------------------------------------
+	"GVL".Robot[1].SEND.ALARMRESET := "iFB_Control".out_RobotAlarmReset;
+	"GVL".Robot[2].SEND.ALARMRESET := "iFB_Control".out_RobotAlarmReset;
+	"GVL".Robot[3].SEND.ALARMRESET := "iFB_Control".out_RobotAlarmReset;
+	
+	
+	//Safety
+	//-------------------------------------------------------------------
+	"DQ_Door_1_Lock" := "iFB_Control".out_GateLock;
+	"DQ_Door_2_Lock" := "iFB_Control".out_GateLock;
+	"DQ_Door_3_Lock" := "iFB_Control".out_GateLock;
+	"DQ_Door_4_Lock" := "iFB_Control".out_GateLock;
+	"DQ_Door_5_Lock" := "iFB_Control".out_GateLock;
+	"DQ_Door_6_Lock" := "iFB_Control".out_GateLock;
+	"DQ_Door_7_Lock" := "iFB_Control".out_GateLock;
+	"DQ_Door_8_Lock" := "iFB_Control".out_GateLock;
+	
+	
+	
+	
+	
+	
+END_ORGANIZATION_BLOCK
+

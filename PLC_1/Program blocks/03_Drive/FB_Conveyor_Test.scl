@@ -1,0 +1,25 @@
+﻿FUNCTION_BLOCK "FB_Conveyor_Test"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+
+BEGIN
+	// =============================================================================
+	// OCTOPUS AUTOMATION
+	// (C) 2026
+	// =============================================================================
+	// Project: TPM_A-1
+	// Module: -
+	// 
+	// POU: FB_Conveyor
+	// -----------------------------------------------------------------------------
+	// Date         Version             Author      Modification
+	// 21.09.26     TMP_A-1             A.M         Created
+	// =============================================================================
+	
+	IF "GVL".ExitConveyor_Start THEN
+	    "FC_ConveyorRun"(id := "C1_CONV_ID");
+	ELSE
+	    "FC_ConveyorStop"(id := "C1_CONV_ID");
+	END_IF;
+END_FUNCTION_BLOCK
+

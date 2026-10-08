@@ -1,0 +1,724 @@
+﻿FUNCTION_BLOCK "FB_AutoMode"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Enable : Bool;
+      In_xBatchLoaded : Bool;
+      In_xPickProductPresent : Bool;
+      In_ProductConveyor_Pos1 : Bool;
+      In_ProductConveyor_Pos3 : Bool;
+      xKillAll : Bool;
+      In_xPressClosed : Bool;
+      xProduct_Conv_Exit : Bool;
+      In_Safety : Bool;
+      In_ExecuteHomeR1 : Bool;
+      In_ExecuteHomeR2 : Bool;
+      In_ExecuteHomeR3 : Bool;
+      "In_Execute HomeR4" : Bool;
+   END_VAR
+
+   VAR_IN_OUT 
+      Servo : "ST_Servo";
+      Robot : Array[1..3] of "ST_ROBOT";
+   END_VAR
+
+   VAR 
+      "iStage-R1" : Int;
+      "iStage-R2" : Int;
+      "iStage-R3" : Int;
+      "iStage-Press" : Int;
+      "iStage-Servo" : Int;
+      xPickR1 : Bool;
+      xPickR2 : Bool;
+      xPickR3 : Bool;
+      xPlaceR1 : Bool;
+      xPlaceR2 : Bool;
+      xPlaceR3 : Bool;
+      xHommingR1 : Bool;
+      xHommingR2 : Bool;
+      xHommingR3 : Bool;
+      xHommingServo : Bool;
+      xPressEnable : Bool;
+      xPressCycle : Bool;
+      Conveyor_Busy : Bool;
+      Conveyor_Done : Bool;
+      xProductAtPress : Bool;
+      xPressProductedReady : Bool;
+      xServoProductPos1 : Bool;
+      xServoProductPos2 : Bool;
+      xServoProductPos3 : Bool;
+      xServoClearRequest : Bool;
+      iServoClearStep : Int;
+      xHomming : Bool;
+   END_VAR
+
+
+BEGIN
+	//========================================================================
+	// Octopus Automation
+	// (C) 2026
+	// =============================================================================
+	// Project:  
+	// Module: -
+	// 
+	// POU: FB_AutoMode
+	// -----------------------------------------------------------------------------
+	// Date         Version                     Author      Modification
+	// 23.09.26                                 A.M
+	
+	// ========================================================================
+	// Initialize
+	// ========================================================================
+	
+	IF #xKillAll THEN
+	    #xPickR1 := FALSE;
+	    #xPickR2 := FALSE;
+	    #xPickR3 := FALSE;
+	    #xPlaceR1 := FALSE;
+	    #xPlaceR2 := FALSE;
+	    #xPlaceR3 := FALSE;
+	    #xHommingR1 := FALSE;
+	    #xHommingR2 := FALSE;
+	    #xHommingR3 := FALSE;
+	    #xHommingServo := FALSE;
+	    #xHomming := TRUE;
+	    #xPressCycle := FALSE;
+	    #xPressEnable := FALSE;
+	    #Conveyor_Busy := FALSE;
+	    #Conveyor_Done := FALSE;
+	    #xServoProductPos1 := FALSE;
+	    #xServoProductPos2 := FALSE;
+	    #xServoProductPos3 := FALSE;
+	    #xServoClearRequest := TRUE;
+	END_IF;
+	
+	
+	REGION R1 Stages
+	    // ========================================================================
+	    // Pick R1 
+	    "iRC_Pick_R1"(Execute := #xPickR1,
+	                  Robot := #Robot[1]);
+	    // ========================================================================
+	    // Place R1 
+	    "iRC_Place_R1"(Execute := #xPlaceR1,
+	                   Robot := #Robot[1]);
+	    // ========================================================================
+	    // Homming R1
+	    "iRC_GoHome_R1"(Execute:=#xHommingR1,
+	                    Robot := #Robot[1]);
+	   
+	// ========================================================================
+	// Emergency / Safety
+	// ========================================================================
+	// If safety is lost:
+	// - Stop Robot 
+	// - Remember that robot must go to home  when safety returns
+	// ========================================================================
+	    IF NOT #In_Safety OR #Robot[1].RECEIVE.ALARM  THEN
+	            #xPickR1 := FALSE;
+	            #"iStage-R1" := 0;
+	            #xHomming:= TRUE;
+	        END_IF;
+	        
+	    
+	    
+	    CASE #"iStage-R1" OF
+	        0:
+	            IF #Enable AND #In_Safety THEN
+	                #"iStage-R1" := 10;
+	            END_IF;
+	            IF #xHomming AND #Enable THEN
+	                #"iStage-R1" := 100;
+	            END_IF;
+	          
+	        10:
+	            //Check if there is product
+	            IF #In_xPickProductPresent THEN
+	                #"iStage-R1" := 20;
+	            END_IF;
+	            #xPickR1 := TRUE;
+	        20:
+	            
+	            IF "iRC_Pick_R1".Busy THEN
+	                #"iStage-R1" := 30;
+	            END_IF;
+	        30:
+	            #xPickR1 := FALSE;
+	            IF "iRC_Pick_R1".Done THEN
+	                #"iStage-R1" :=40;
+	            END_IF;
+	        40:
+	            //Check if there is product at the conveyor 
+	            IF NOT #In_ProductConveyor_Pos1 AND NOT #Servo.Move.Busy THEN
+	                #"iStage-R1" := 50;
+	            END_IF;
+	        50:
+	            #xPlaceR1 := TRUE;
+	            IF "iRC_Place_R1".Busy THEN
+	                #"iStage-R1" := 60;
+	            END_IF;
+	        60:
+	            #xPlaceR1 := FALSE;
+	            IF "iRC_Place_R1".Done THEN
+	                //Placed Product Position 1 
+	                #xServoProductPos1 := TRUE;
+	                #"iStage-R1" := 0;
+	            END_IF;
+	            
+	 //Homming R1 after Safety Brake or Robot Alarm allarm 
+	        100:
+	            #xHommingR1 := TRUE;
+	            IF "iRC_GoHome_R1".Busy THEN
+	                #"iStage-R1" := 110;
+	            END_IF;
+	        110:
+	            #xHommingR1 := FALSE;
+	            IF "iRC_GoHome_R1".Done THEN
+	                #"iStage-R1" := 120;
+	            END_IF;
+	        120:
+	            IF NOT #xHomming THEN
+	                #"iStage-R1" := 0;
+	            END_IF;
+	            
+	            
+	    END_CASE;
+	    
+	END_REGION
+	REGION R2 Stages
+	    // ========================================================================
+	    // Pick R2 
+	    "iRC_Pick_R2"(Execute := #xPickR2,
+	                  Robot := #Robot[2]);
+	    // ========================================================================
+	    // Place R2 
+	    "iRC_Place_R2"(Execute := #xPlaceR2,
+	                   Robot := #Robot[2]);
+	    // ========================================================================
+	    // Homming R1
+	    
+	    "iRC_GoHome_R2"(Execute:=#xHommingR2,
+	                    Robot:=#Robot[2]);
+	    
+	    
+	    //========================================================================
+	        
+	        // ========================================================================
+	        // Emergency / Safety
+	        // ========================================================================
+	        // If safety is lost:
+	        // - Stop Robot 
+	        // - Remember that robot must go to home  when safety returns
+	        // ========================================================================
+	        IF NOT #In_Safety OR #Robot[2].RECEIVE.ALARM THEN
+	            #xPickR2 := FALSE;
+	            #"iStage-R2" := 0;
+	            #xHomming := TRUE;
+	        END_IF;
+	    
+	        CASE #"iStage-R2" OF
+	            0:
+	                IF #Enable AND #In_Safety THEN
+	                    #"iStage-R2" := 10;
+	                END_IF;
+	                IF #xHomming AND #Enable THEN
+	                    #"iStage-R2" := 100;
+	                END_IF;
+	            10:
+	                
+	                //Check if there is product
+	                IF #In_ProductConveyor_Pos3 AND NOT #Servo.Move.Busy THEN
+	                    #"iStage-R2" := 20;
+	                END_IF;
+	            20:
+	                #xPickR2 := TRUE;
+	                IF "iRC_Pick_R2".Busy THEN
+	                    #"iStage-R2" := 30;
+	                END_IF;
+	            30:
+	                #xPickR2 := FALSE;
+	                IF "iRC_Pick_R2".Done THEN
+	                    //Removed product from position 3 
+	                    #xServoProductPos3 := FALSE;
+	                    #"iStage-R2" := 40;
+	                END_IF;
+	            40:
+	                //Check if there is product at press or press if it is busy 
+	                IF NOT #xProductAtPress AND NOT "iFB_Press".Busy AND NOT "iRC_Pick_R3".Busy THEN
+	                    #"iStage-R2" := 50;
+	                END_IF;
+	            50:
+	                #xPlaceR2 := TRUE;
+	                IF "iRC_Place_R2".Busy THEN
+	                    #"iStage-R2" := 60;
+	                END_IF;
+	            60:
+	                #xPlaceR2 := FALSE;
+	                IF "iRC_Place_R2".Done THEN
+	                    #xProductAtPress := TRUE;
+	                    #"iStage-R2" := 0;
+	                END_IF;
+	                
+	                //Homming R1 after Safety Brake or Robot Alarm allarm 
+	            100:
+	                #xHommingR2 := TRUE;
+	                IF "iRC_GoHome_R2".Busy THEN
+	                    #"iStage-R2" := 110;
+	                END_IF;
+	            110:
+	                #xHommingR2 := FALSE;
+	                IF "iRC_GoHome_R2".Done THEN
+	                    #"iStage-R2" := 120;
+	                END_IF;
+	            120:
+	                IF NOT #xHomming THEN
+	                    #"iStage-R2" := 0;
+	                END_IF;
+	                
+	        END_CASE;
+	END_REGION
+	REGION R3 Stages
+	    // ========================================================================
+	    // Pick R3 
+	    "iRC_Pick_R3"(Execute := #xPickR3,
+	                  Robot := #Robot[3]);
+	    // ========================================================================
+	    // Place R3 
+	    "iRC_Place_R3"(Execute := #xPlaceR3,
+	                   Robot := #Robot[3]);
+	    // ========================================================================
+	    // Homming R3
+	    "iRC_GoHome_R3"(Execute:=#xHommingR3,
+	                    Robot:=#Robot[3]);
+	    
+	    // ========================================================================
+	    // Emergency / Safety
+	    // ========================================================================
+	    // If safety is lost:
+	    // - Stop Robot 
+	    // - Remember that robot must go to home  when safety returns
+	    // ========================================================================
+	    IF NOT #In_Safety OR #Robot[1].RECEIVE.ALARM THEN
+	        #xPickR3 := FALSE;
+	        #"iStage-R3" := 0;
+	        #xHomming := TRUE;
+	    END_IF;
+	    
+	    
+	    
+	    CASE #"iStage-R3" OF
+	        0:
+	            IF #Enable AND #In_Safety THEN
+	                #"iStage-R3" := 10;
+	            END_IF;
+	            IF #xHomming AND #Enable THEN
+	                #"iStage-R3" := 100;
+	            END_IF;
+	        10:
+	            //Check if there is product
+	            IF #xPressProductedReady AND NOT "iFB_Press".Busy AND NOT #In_xPressClosed AND NOT "iRC_Place_R2".Busy THEN
+	                #"iStage-R3" := 20;
+	            END_IF;
+	        20:
+	            #xPickR3 := TRUE;
+	            IF "iRC_Pick_R3".Busy THEN
+	                #"iStage-R3" := 30;
+	            END_IF;
+	        30:
+	            #xPickR3 := FALSE;
+	            IF "iRC_Pick_R3".Done THEN
+	                #xProductAtPress := FALSE;
+	                #"iStage-R3" := 40;
+	            END_IF;
+	        40:
+	            //Check if there is product at conveyor
+	            IF NOT #xProduct_Conv_Exit THEN
+	                #"iStage-R3" := 50;
+	            END_IF;
+	        50:
+	            #xPlaceR3 := TRUE;
+	            IF "iRC_Place_R3".Busy THEN
+	                #"iStage-R3" := 60;
+	            END_IF;
+	        60:
+	            #xPlaceR3 := FALSE;
+	            IF "iRC_Place_R3".Done THEN
+	                #"iStage-R3" := 0;
+	            END_IF;
+	            
+	            //Homming R1 after Safety Brake or Robot Alarm allarm 
+	        100:
+	            #xHommingR3 := TRUE;
+	            IF "iRC_GoHome_R3".Busy THEN
+	                #"iStage-R3" := 110;
+	            END_IF;
+	        110:
+	            #xHommingR3 := FALSE;
+	            IF "iRC_GoHome_R3".Done THEN
+	                #"iStage-R3" := 120;
+	            END_IF;
+	        120:
+	            IF NOT #xHomming THEN
+	                #"iStage-R3" := 0;
+	            END_IF;
+	            
+	    END_CASE;
+	END_REGION
+	REGION #Servo
+	    // ========================================================================
+	    // Servo
+	    // ========================================================================
+	    // Dp 112.05
+	    "iMC_Power_Servo"(Axis := "Axis_1",
+	                      Enable := #Servo.Power.Enable,
+	                      Status => #Servo.Power.Enabled);
+	    
+	    "iMC_MoveRelative"(Axis := "Axis_1",
+	                       Execute := #Servo.Move.Execute,
+	                       Distance := #Servo.Move.Distance,
+	                       Velocity := #Servo.Move.Velocity,
+	                       Busy => #Servo.Move.Busy,
+	                       Done => #Servo.Move.Done,
+	                       Error => #Servo.Move.Error,
+	                       ErrorID => #Servo.Move.ErrorID);
+	    
+	    "iMC_Home"(Axis := "Axis_1",
+	               Execute := #Servo.Home.Execute,
+	               Done => #Servo.Home.Done,
+	               Busy => #Servo.Home.Busy,
+	               CommandAborted => #Servo.Home.CommandAborted,
+	               Error => #Servo.Home.Error,
+	               ErrorID => #Servo.Home.ErrorID,
+	               Mode := #Servo.Home.Mode,
+	               Position := #Servo.Home.Position,
+	               ReferenceMarkPosition => #Servo.Home.ReferencePosition);
+	    
+	    
+	    "iMC_MoveJog"(Axis := "Axis_1",
+	                  JogForward := #Servo.Jogging.FWD,
+	                  JogBackward := #Servo.Jogging.BWD,
+	                  Busy => #Servo.Jogging.Busy,
+	                  CommandAborted => #Servo.Jogging.Command_Aborted,
+	                  Error => #Servo.Jogging.Error,
+	                  ErrorID => #Servo.Jogging."Error ID",
+	                  Velocity := #Servo.Jogging.Velocity);
+	   
+	    // ========================================================================
+	    // Servo Stages
+	    // ========================================================================
+	    
+	    
+	    // ========================================================================
+	    // Emergency / Safety
+	    // ========================================================================
+	    // If safety is lost:
+	    // - Stop motion command
+	    // - Disable servo
+	    // - Remember that conveyor must be cleared when safety returns
+	    // ========================================================================
+	    
+	    
+	    
+	    IF NOT #In_Safety OR #Servo.Move.Error THEN
+	        #Servo.Move.Execute := FALSE;
+	        #Servo.Power.Enable := FALSE;
+	        #xServoClearRequest := TRUE;
+	        #Servo.Move.CommandAborted := TRUE;
+	        #iServoClearStep := 0;
+	        #"iStage-Servo" := 0;
+	    END_IF;
+	    
+	    // ========================================================================
+	    // Disable or Servo Error
+	    // ========================================================================
+	    
+	    IF NOT #Enable THEN
+	        #Servo.Move.CommandAborted := TRUE;
+	        #Servo.Move.Execute := FALSE;
+	        #Servo.Power.Enable := FALSE;
+	        #"iStage-Servo" := 0;
+	    END_IF;
+	    
+	    
+	    
+	    // ========================================================================
+	    // Servo State Machine
+	    // ========================================================================
+	    
+	    CASE #"iStage-Servo" OF
+	            
+	            // --------------------------------------------------------------------
+	            // 0 - Wait for system enable + safety
+	            // --------------------------------------------------------------------
+	        0:
+	            
+	            #Servo.Move.Execute := FALSE;
+	            
+	            IF #Enable AND #In_Safety THEN
+	                #"iStage-Servo" := 10;
+	            END_IF;
+	           
+	            
+	            // --------------------------------------------------------------------
+	            // 10 - Servo Power ON
+	            // --------------------------------------------------------------------
+	        10:
+	            #Servo.Move.CommandAborted := FALSE;
+	            #Servo.Power.Enable := TRUE;
+	            #Servo.Move.Execute := FALSE;
+	            
+	            IF #Servo.Power.Enabled THEN
+	                // If we came back from Emergency / Safety,
+	                // clear the conveyor first
+	                IF #xServoClearRequest THEN
+	                    #iServoClearStep := 0;
+	                    #"iStage-Servo" := 100;
+	                ELSE
+	                    #"iStage-Servo" := 20;
+	                END_IF;
+	                
+	            END_IF;
+	            
+	            // ====================================================================
+	            // NORMAL PRODUCTION
+	            // ====================================================================
+	            
+	            // --------------------------------------------------------------------
+	            // 20 - Wait for product 
+	            // --------------------------------------------------------------------
+	        20:
+	            #Servo.Move.Execute := FALSE;
+	            IF (#In_ProductConveyor_Pos1 AND #xServoProductPos1)
+	                AND
+	                (NOT #xServoProductPos3 AND NOT #In_ProductConveyor_Pos3)
+	            THEN
+	                #"iStage-Servo" := 30;
+	            END_IF;
+	            
+	            // --------------------------------------------------------------------
+	            // 30 - Start normal conveyor index
+	            // --------------------------------------------------------------------
+	        30:
+	            #Servo.Move.Distance := 880;
+	            #Servo.Move.Velocity := 700;
+	            
+	            #Servo.Move.Execute := TRUE;
+	            
+	            IF "iMC_MoveRelative".Busy THEN
+	                #"iStage-Servo" := 40;
+	            END_IF;
+	            
+	            // --------------------------------------------------------------------
+	            // 40 - Wait for  move to complete
+	            // --------------------------------------------------------------------
+	        40:
+	            #Servo.Move.Execute := FALSE;
+	            
+	            IF "iMC_MoveRelative".Done THEN
+	                #"iStage-Servo" := 50;
+	            END_IF;
+	            
+	            // --------------------------------------------------------------------
+	            // 50 - Update product tracking
+	            // --------------------------------------------------------------------
+	        50:
+	            #Servo.Move.Execute := FALSE;
+	            // Shift products one position forward
+	            #xServoProductPos3 := #xServoProductPos2;
+	            #xServoProductPos2 := #xServoProductPos1;
+	            #xServoProductPos1 := FALSE;
+	            
+	            #"iStage-Servo" := 20;
+	            
+	            // ====================================================================
+	            // CLEARING SEQUENCE AFTER EMERGENCY / SAFETY
+	            // ====================================================================
+	            
+	            // --------------------------------------------------------------------
+	            // 100 - Start clearing move
+	            // --------------------------------------------------------------------
+	            
+	        100:
+	            #xHommingServo := TRUE;
+	            IF #Servo.Home.Busy THEN
+	                #"iStage-Servo" := 110;
+	            END_IF;
+	        110:
+	            #xHommingServo := FALSE;
+	            IF #Servo.Home.Done THEN
+	                #"iStage-Servo" := 120;
+	            END_IF;
+	        120:
+	            #Servo.Move.Distance := 880;
+	            #Servo.Move.Velocity := 700;
+	            
+	            #Servo.Move.Execute := TRUE;
+	            
+	            IF "iMC_MoveRelative".Busy THEN
+	                #"iStage-Servo" := 130;
+	            END_IF;
+	            
+	            // --------------------------------------------------------------------
+	            // 110 - Wait for clearing movement complete
+	            // --------------------------------------------------------------------
+	        130:
+	            #Servo.Move.Execute := FALSE;
+	            
+	            IF "iMC_MoveRelative".Done THEN
+	                #"iStage-Servo" := 140;
+	            END_IF;
+	            
+	            // --------------------------------------------------------------------
+	            // 120 - Count clearing steps
+	            // --------------------------------------------------------------------
+	        140:
+	            #Servo.Move.Execute := FALSE;
+	            #iServoClearStep := #iServoClearStep + 1;
+	            
+	            // ---------------------------------------------------------------
+	            // Two clearing movements are required
+	            // ---------------------------------------------------------------
+	            IF #iServoClearStep < 2 THEN
+	                
+	                // Do another 880 mm move
+	                #"iStage-Servo" := 120;
+	            ELSE
+	                // Conveyor has now completed the 2 clearing indexes
+	                #xServoProductPos1 := FALSE;
+	                #xServoProductPos2 := FALSE;
+	                #xServoProductPos3 := FALSE;
+	                
+	                #xServoClearRequest := FALSE;
+	                #iServoClearStep := 0;
+	                
+	                // Return to normal production
+	                #"iStage-Servo" := 20;
+	            END_IF;
+	    END_CASE;
+	END_REGION
+	REGION Exit Conveyor  
+	    "Set_Conv"(CLK:="GVL".Robot[3].RECEIVE.HOLD);
+	    
+	    
+	    IF "Set_Conv".Q THEN
+	        "GVL".ExitConveyor_Start := NOT "GVL".ExitConveyor_Start;
+	    END_IF; 
+	    
+	END_REGION
+	REGION Press
+	// ========================================================================
+	// Press
+	// ========================================================================
+	
+	// Press Function
+	"iFB_Press"(
+	            Enable := #xPressEnable,
+	            Emg := #In_Safety,
+	            Start_Cycle := #xPressCycle
+	);
+	// ========================================================================
+	// Press Stages
+	// ========================================================================
+	
+	CASE #"iStage-Press" OF
+	        
+	        // --------------------------------------------------------------------
+	        // 0 - Wait for product at press
+	        // --------------------------------------------------------------------
+	    0:
+	        #xPressEnable := FALSE;
+	        #xPressCycle := FALSE;
+	        
+	        IF #Enable
+	            AND #In_Safety
+	            AND #xProductAtPress
+	            AND NOT #xPressProductedReady
+	            AND NOT "iRC_Place_R2".Busy
+	            AND NOT "iRC_Pick_R3".Busy
+	        THEN
+	            #"iStage-Press" := 10;
+	        END_IF;
+	        // --------------------------------------------------------------------
+	        // 10 - Enable press and wait until press is ready
+	        // --------------------------------------------------------------------
+	    10:
+	        #xPressEnable := TRUE;
+	        #xPressCycle := FALSE;
+	        
+	        IF "iFB_Press".PressReady THEN
+	            #"iStage-Press" := 20;
+	        END_IF;
+	        // --------------------------------------------------------------------
+	        // 20 - Start press cycle
+	        // --------------------------------------------------------------------
+	    20:
+	        #xPressEnable := TRUE;
+	        #xPressCycle := TRUE;
+	        
+	        IF "iFB_Press".Busy THEN
+	            #"iStage-Press" := 30;
+	        END_IF;
+	        
+	        // --------------------------------------------------------------------
+	        // 30 - Press cycle running
+	        // --------------------------------------------------------------------
+	    30:
+	        #xPressCycle := FALSE;
+	        IF "iFB_Press".Done THEN
+	            #xPressProductedReady := TRUE;
+	            #"iStage-Press" := 40;
+	        END_IF;
+	        
+	        // --------------------------------------------------------------------
+	        // 40 - Product finished / wait for Robot 3
+	        // --------------------------------------------------------------------
+	    40:
+	        // Robot 3 will now take the finished product.
+	        // When product is physically removed from press,
+	        // reset tracking and allow another press cycle.
+	        IF NOT #xProductAtPress THEN
+	            #xPressProductedReady := FALSE;
+	            #"iStage-Press" := 0;
+	        END_IF;
+	        
+	END_CASE;
+	
+	
+	// ========================================================================
+	// Emergency / Safety or Disabled or 
+	// ===================== ===================================================
+	// Safety loss immediately removes press commands.
+	// Do NOT automatically continue the interrupted stroke.
+	// ========================================================================
+	
+	IF NOT #In_Safety OR NOT #Enable THEN
+	    #xPressEnable := FALSE;
+	    #xPressCycle := FALSE;
+	    #"iStage-Press" := 0;
+	END_IF;
+	    
+	END_REGION
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	    
+	        
+	        
+	 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+END_FUNCTION_BLOCK
+

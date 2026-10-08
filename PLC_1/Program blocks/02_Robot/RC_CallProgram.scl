@@ -1,0 +1,178 @@
+﻿FUNCTION_BLOCK "RC_CallProgram"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Execute : Bool;
+      Cmd : Int;
+      Param_1 : Int;
+      Param_2 : Int;
+      Param_3 : Int;
+      Param_4 : Int;
+      Param_5 : Int;
+      Param_6 : Int;
+   END_VAR
+
+   VAR_OUTPUT 
+      Busy : Bool;
+      Done : Bool;
+      Error : Bool;
+      ErrorId : Int;
+      CommandAborted : Bool;
+   END_VAR
+
+   VAR_IN_OUT 
+      Robot : "ST_ROBOT";
+   END_VAR
+
+   VAR 
+      iStage : Int;
+      CmdId : Int;
+      tonTimeOut {InstructionName := 'TON_TIME'; LibVersion := '1.0'; S7_SetPoint := 'False'} : TON_TIME;
+      xTimeOut { S7_SetPoint := 'True'} : Bool;
+   END_VAR
+
+   VAR_TEMP 
+      RobotBusy : Bool;
+      RobotDone : Bool;
+      RobotError : Bool;
+      RobotAlarm : Bool;
+      RobotPickDone : Bool;
+      RobotActCmdId : Int;
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// Octopus Automation
+	// (C) 2026
+	// =============================================================================
+	// Project: Template
+	// 
+	// POU: RC_CallProgram
+	// -----------------------------------------------------------------------------
+	// Date         Version                        Author              Modification
+	// 23.09.26                                    A.M.                Created
+	// =============================================================================
+	
+	// -----------------------------------------------------------------------------
+	// Robot Registers
+	// -----------------------------------------------------------------------------
+	// CMD      : I10
+	// Param1   : I11
+	// Param2   : I12
+	// Param3   : I13
+	// Param4   : I14
+	// =============================================================================
+	
+	#RobotBusy := #Robot.RECEIVE.USER_BITS.BUSY;
+	#RobotDone := #Robot.RECEIVE.USER_BITS.DONE;
+	#RobotError := #Robot.RECEIVE.USER_BITS.#ERROR;
+	#RobotAlarm := #Robot.RECEIVE.USER_BITS.#ERROR OR #Robot.RECEIVE.ROBOTCOLLISION;
+	#RobotActCmdId := #Robot.RECEIVE.ACT_CMDID;
+	
+	IF "GVL".xKillAll THEN
+	    #Busy := FALSE;
+	    #Done := FALSE;
+	    #Error := FALSE;
+	    #iStage := 0;
+	END_IF;
+	
+	IF #iStage > 0 AND #RobotAlarm THEN
+	    #ErrorId := #iStage;
+	    #iStage := 1000;
+	END_IF;
+	
+	// Wrong CmdId time out
+	#tonTimeOut(IN := #xTimeOut,
+	            PT := T#500ms);
+	
+	CASE #iStage OF
+	        
+	    0:
+	        #Busy := FALSE;
+	        #xTimeOut := false;
+	        // Wait for execute
+	        IF #Execute AND NOT #RobotAlarm AND NOT #RobotBusy THEN
+	            #iStage := 10;
+	        END_IF;
+	        
+	    10:
+	        #Busy := true;
+	        #Done := false;
+	        #Error := false;
+	        #CommandAborted := false;
+	        //Reset Robot Command
+	        #Robot.SEND.CMD := 0;
+	        #iStage := 20;
+	        
+	    20:
+	        //Send Parameters
+	        #Robot.SEND.X := #Param_1;
+	        #Robot.SEND.Y := #Param_2;
+	        #Robot.SEND.Z := #Param_3;
+	        #Robot.SEND.Rx := #Param_4;
+	        #Robot.SEND.Ry := #Param_5;
+	        #Robot.SEND.Rz := #Param_6;
+	        #Robot.SEND.CMD_ID := #Robot.SEND.CMD_ID + 1;
+	        IF #Robot.SEND.CMD_ID > 10000 THEN
+	            #Robot.SEND.CMD_ID := 1;
+	        END_IF;
+	        #Robot.SEND.CMD := #Cmd;
+	        #iStage := 30;
+	        
+	    30:
+	        // Wait until the robot is BUSY
+	        IF #RobotBusy THEN
+	            #iStage := 40;
+	        END_IF;
+	        
+	    40:
+	        // Check cmd_id
+	        IF #Robot.RECEIVE.ACT_CMDID = #Robot.SEND.CMD_ID THEN
+	            #iStage := 50;
+	        END_IF;
+	       // #xTimeOut := true;
+	        //IF #tonTimeOut.Q THEN
+	          // #ErrorId := #iStage;
+	          //  #iStage := 1000;
+	       // END_IF;
+	        
+	    50:
+	        // Wait until the robot is done
+	      //#xTimeOut := false;
+	        IF #RobotDone THEN
+	            #iStage := 60;
+	        END_IF;
+	        IF #RobotError THEN
+	           #ErrorId := #iStage;
+	           #iStage := 1000;
+	        END_IF; 
+	        
+	    60:
+	        #Robot.SEND.CMD := 0;
+	        IF NOT #Robot.RECEIVE.USER_BITS.BUSY THEN
+	            #iStage := 70;
+	        END_IF;
+	        
+	    70:
+	        #Done := true;
+	        IF NOT #Execute THEN
+	            #iStage := 0;
+	        END_IF;
+	        
+	    1000:
+	        #Error := true;
+	        #Robot.SEND.CMD := 0;
+	        #iStage := 1010;
+	        
+	    1010:
+	        #xTimeOut := false;
+	        IF NOT #Execute THEN
+	            #iStage := 0;
+	        END_IF;
+	        
+	END_CASE;
+	
+	
+END_FUNCTION_BLOCK
+

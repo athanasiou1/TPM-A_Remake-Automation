@@ -1,0 +1,68 @@
+﻿FUNCTION "FC_ConveyorCtrl" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      id : Int;
+      mmps : Real;
+   END_VAR
+
+   VAR_TEMP 
+      "Type" : Int;   // 1 or 2
+      DrumPerimeter : Real;   // mm
+      mm_per_motorrev : Real;   // mm/rev
+      nominal_rps : Real;   // rps
+      nominal_mmps : Real;   // mmps At 50Hz
+      CmdFreq : Real;   // Hz
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// OCTOPUS AUTOMATION
+	// (C) 2026
+	// =============================================================================
+	// Project: TPM_A-1
+	// Module: -
+	// 
+	// POU: FC_ConveyorCtrl
+	// -----------------------------------------------------------------------------
+	// Conveyor Inverter Control (via profinet)
+	// -----------------------------------------------------------------------------
+	// Date         Version             Author      Modification
+	// 21.09.26     TMP_A-1             A.M         Created
+	// =============================================================================
+	
+	// Determine conveyor type
+	IF #id = "C1_CONV_ID"  THEN
+	    #Type := "TYPE_CONV_1";
+	ELSE
+	    #Type := "TYPE_CONV_2";
+	END_IF;
+	
+	// Calculate nominal mmps (ie mmps at 50 Hz)
+	IF #Type = "TYPE_CONV_1" THEN
+	    #DrumPerimeter := "CONV_1_DRUM_DIA" * "PI";
+	    #mm_per_motorrev := #DrumPerimeter / "CONV_1_REDUCER_I";
+	    #nominal_rps := "CONV_1_MOTOR_RPM" / 60.0;
+	    #nominal_mmps := #mm_per_motorrev * #nominal_rps;
+	ELSE
+	    #DrumPerimeter := "CONV_2_PITCH" * "CONV_2_DRUM_Z";
+	    #mm_per_motorrev := #DrumPerimeter / "CONV_2_REDUCER_I";
+	    #nominal_rps := "CONV_2_MOTOR_RPM" / 60.0;
+	    #nominal_mmps := #mm_per_motorrev * #nominal_rps;
+	END_IF;
+	
+	// Devide by 0 safety
+	IF #nominal_mmps = 0 THEN
+	    RETURN;
+	END_IF;
+	
+	// Convert mmps to Hz
+	#CmdFreq := 50.0 * #mmps / #nominal_mmps;
+	
+	// Run inverter
+	"FC_InvCtrl"(id := #id,
+	             Hz := #CmdFreq);
+	
+END_FUNCTION
+

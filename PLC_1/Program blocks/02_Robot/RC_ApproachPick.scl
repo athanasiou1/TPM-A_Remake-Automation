@@ -1,0 +1,107 @@
+﻿FUNCTION_BLOCK "RC_ApproachPick"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Execute : Bool;
+   END_VAR
+
+   VAR_OUTPUT 
+      Busy : Bool;
+      Done : Bool;
+      Error : Bool;
+      ErrorId : Int;
+   END_VAR
+
+   VAR_IN_OUT 
+      Robot : "ST_ROBOT";
+   END_VAR
+
+   VAR 
+      iStage : Int;
+      iRC_CallProgramm { S7_SetPoint := 'False'} : "RC_CallProgram";
+      xGo { S7_SetPoint := 'True'} : Bool;
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// Octopus Automation
+	// (C) 2026
+	// =============================================================================
+	// Project: Template
+	// Module: -#Robot Command
+	// 
+	// POU: RC_ApproachFrontReel
+	// -----------------------------------------------------------------------------
+	// Date         Version                        Author               Modification
+	// 02.02.24                                    AM                Created               
+	// =============================================================================
+	
+	// =============================================================================
+	// Parameters:
+	// 
+	// =============================================================================
+	
+	IF "GVL".xKillAll THEN
+	    #Busy := FALSE;
+	    #Done := FALSE;
+	    #Error := FALSE;
+	    #ErrorId := 0;
+	    #iStage := 0;
+	    #Robot.SEND.CMD := 0;
+	END_IF;
+	
+	#iRC_CallProgramm(Execute := #xGo,
+	                  Robot := #Robot,
+	                  Cmd := "ROBOT_CMD_APPROACH_PICK");
+	                (*  Param_1 :=  "GVL".PlacePosition.Place[1].X,
+	                  Param_2 :=  "GVL".PlacePosition.Place[1].Y,
+	                  Param_3 :=  "GVL".PlacePosition.Place[1].Z,
+	                  Param_4 := 0);
+	                 *)
+	
+	CASE #iStage OF
+	        
+	    0:
+	        #Busy := FALSE;
+	        #xGo := false;
+	        // Wait for execute
+	        IF #Execute THEN
+	            #iStage := 10;
+	        END_IF;
+	        
+	    10:
+	        #Busy := true;
+	        #Done := false;
+	        #Error := false;
+	        #xGo := true;
+	        IF #iRC_CallProgramm.Busy THEN
+	            #iStage := 20;
+	        END_IF;
+	        
+	    20:
+	        IF #iRC_CallProgramm.Done THEN
+	            #iStage := 30;
+	        END_IF;
+	        IF #iRC_CallProgramm.Error THEN
+	            #iStage := 1000;
+	        END_IF;
+	        
+	    30:
+	        #Done := true;
+	        IF NOT #Execute THEN
+	            #iStage := 0;
+	        END_IF;
+	       
+	    1000:
+	        #Error := true;
+	        #ErrorId := #iRC_CallProgramm.ErrorId;
+	        IF NOT #Execute THEN
+	            #iStage := 0;
+	        END_IF;
+	        
+	END_CASE;
+	
+	
+END_FUNCTION_BLOCK
+

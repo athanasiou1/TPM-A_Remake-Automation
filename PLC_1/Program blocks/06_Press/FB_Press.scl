@@ -1,0 +1,145 @@
+﻿FUNCTION_BLOCK "FB_Press"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Enable : Bool;
+      Power : Bool;
+      Emg : Bool;
+      Ready : Bool;
+      MainMotor : Bool;
+      Start_Cycle : Bool;
+      Stop_Motor : Bool;
+      SensorTop : Bool;
+   END_VAR
+
+   VAR_OUTPUT 
+      Busy : Bool;
+      Done : Bool;
+      Error : Bool;
+      Cycle : Bool;
+      Switch_Off : Bool;
+      Switch_SafetyStroke : Bool;
+      Motor_Start : Bool;
+      Motor_Stop : Bool;
+      Power_On : Bool;
+      Power_Off : Bool;
+      Reset : Bool;
+   END_VAR
+
+   VAR 
+      iStage : Int;
+      iCycle : Int;
+      PressReady : Bool;
+   END_VAR
+
+   VAR_TEMP 
+      xreset : Bool;
+      xCycle : Bool;
+      xMotorStarted : Bool;
+   END_VAR
+
+
+BEGIN
+	//========================================================================
+	// Octopus Automation
+	// (C) 2026
+	// =============================================================================
+	// Project:  
+	// Module: -
+	// 
+	// POU: FB_Press
+	// -----------------------------------------------------------------------------
+	// Date         Version                     Author      Modification
+	// 24.09.26                                 A.M
+	
+	//Reset Time 
+	"TP_Reset".TP(IN:=#xreset,
+	              PT:=T#1s,
+	              Q=>#Reset);
+	//Cycle Time
+	"TP_Cycle".TP(IN:=#xCycle,
+	              PT:=T#4s,
+	              Q=>#Cycle);
+	//Wait Time At the begining spo the motor has been started
+	"TON_MotorStarted".TON(IN:=#MainMotor,
+	                       PT:=T#10s,
+	                       Q=>#xMotorStarted);
+	
+	
+	
+	IF #Emg OR NOT #Power  AND #iStage>=20 THEN
+	    #iStage := 0;
+	END_IF;
+	//-------------------------------------------------------------------------------------------------------------
+	//Enable Press
+	//-------------------------------------------------------------------------------------------------------------
+	CASE #iStage OF
+	    0:
+	        #PressReady := FALSE;
+	        #xreset := FALSE;
+	        IF #Power AND #Enable THEN
+	            #iStage := 10;
+	        END_IF;
+	    10:
+	        //Turn Safety stroke to OFF
+	        #Switch_SafetyStroke := FALSE;
+	        IF #Emg OR NOT #Power THEN
+	            #xreset := TRUE;//Pulse for 1s  
+	            //show ALARM EMG OR AIR 
+	            #iStage := 0;
+	        END_IF;
+	        
+	        //when we turn the safety stroke off the ready becomes off
+	        IF NOT #Emg AND NOT #Ready THEN
+	            #iStage := 10;
+	            #xreset := FALSE;
+	        END_IF;
+	    20:
+	        #Motor_Start := TRUE; //FOR 1 S  PULSE 
+	        //Wait 10s after the main motor on so we can go to next stage 
+	        IF #xMotorStarted THEN
+	            #iStage := 30;
+	        END_IF;
+	    30:
+	        #Motor_Start := FALSE;
+	        #Switch_SafetyStroke := TRUE;
+	        IF #Ready THEN
+	            #iStage := 40;
+	        END_IF;
+	    40:
+	        #PressReady:=TRUE;
+	        
+	        IF #Stop_Motor THEN
+	            #iStage := 0;
+	        END_IF;
+	        IF NOT #MainMotor THEN
+	            #iStage := 0;
+	        END_IF;
+	      
+	END_CASE;
+	
+	//-------------------------------------------------------------------------------------------------------------
+	//Cycle
+	//-------------------------------------------------------------------------------------------------------------
+	IF NOT #PressReady THEN
+	    #iStage := 0;
+	END_IF;
+	CASE #iCycle OF
+	    0:
+	        #xCycle := false;
+	        IF #PressReady THEN
+	            #iCycle := 10;
+	        END_IF;
+	    10:
+	        IF #Start_Cycle THEN
+	            #xCycle := TRUE;
+	            #iCycle := 20;
+	        END_IF;
+	    20:
+	        IF NOT #Cycle AND NOT  #SensorTop THEN
+	            #iCycle := 0;
+	        END_IF;
+	        
+	END_CASE;
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,20 @@
+﻿# OS / editor clutter
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.tmp
+*.bak
+~$*
+
+# TIA Portal project/build artifacts (if ever placed here)
+*.ap1[0-9]
+*.ap2[0-9]
+*.al1[0-9]
+*.al2[0-9]
+*.zap1[0-9]
+*.zap2[0-9]
+Logs/
+IM/
+System/
+XRef/
+TMP/

@@ -1,0 +1,28 @@
+﻿FUNCTION "FC_ConveyorStop" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      id : Int;
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// OCTOPUS AUTOMATION
+	// (C) 2026
+	// =============================================================================
+	// Project: TPM_A-1
+	// Module: --
+	// 
+	// POU: FC_ConveyorStop
+	// -----------------------------------------------------------------------------
+	// Conveyor Inverter Control (via profinet)
+	// -----------------------------------------------------------------------------
+	// Date         Version             Author      Modification
+	// 21.09.26     TMP_A-1             A.M         Created
+	// =============================================================================
+	
+	"FC_ConveyorCtrl"(id := #id, mmps := 0);
+	
+END_FUNCTION
+

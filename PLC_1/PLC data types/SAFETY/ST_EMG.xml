@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V19" />
+  <SW.Types.PlcStruct ID="0">
+    <AttributeList>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v5">
+  <Section Name="None">
+    <Member Name="EMG_1" Datatype="Bool" />
+    <Member Name="EMG_BT" Datatype="Bool" />
+    <Member Name="EMG_ControlPanel" Datatype="Bool" />
+    <Member Name="EMG_Robot_1" Datatype="Bool" />
+    <Member Name="EMG_Robot_2" Datatype="Bool" />
+    <Member Name="EMG_Robot_3" Datatype="Bool" />
+    <Member Name="EMG_7" Datatype="Bool" />
+    <Member Name="EMG_8" Datatype="Bool" />
+    <Member Name="EMG_9" Datatype="Bool" />
+    <Member Name="EMG_10" Datatype="Bool" />
+    <Member Name="EMG_11" Datatype="Bool" />
+    <Member Name="EMG_12" Datatype="Bool" />
+    <Member Name="EMG_13" Datatype="Bool" />
+    <Member Name="EMG_14" Datatype="Bool" />
+    <Member Name="EMG_General" Datatype="Bool" />
+  </Section>
+</Sections></Interface>
+      <Name>ST_EMG</Name>
+      <Namespace />
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <MultilingualText ID="3" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="4" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Types.PlcStruct>
+</Document>

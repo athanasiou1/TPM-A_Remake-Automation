@@ -1,0 +1,345 @@
+﻿FUNCTION "FC_R1_COM" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.5
+   VAR_IN_OUT 
+      ROBOT : "ST_ROBOT";
+   END_VAR
+
+   VAR_TEMP 
+      lW : Word;
+      NotUsed : Bool;
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// Octopus Automation
+	// (C) 2026
+	// =============================================================================
+	// Project: Template
+	// Module: -
+	// 
+	// POU: FC_R1_COM
+	// -----------------------------------------------------------------------------
+	// Date         Version                     Author      Modification
+	// 23.09.26     FC_R1_COM                   A.M
+	
+	// -----------------------------------------------------------------------------
+	
+	// =============================================================================
+	// PLC => ROBOT
+	// =============================================================================
+	
+	//The following setup is made according to robot setup as slave ;
+	// System byte 0; bits 0..7 follow the supplied robot mapping.
+	"ByteOUT :0 R1".%X0 := #ROBOT.SEND.EXTERNALSTART;
+	"ByteOUT :0 R1".%X1 := #ROBOT.SEND.EXTERNALSERVOON;
+	"ByteOUT :0 R1".%X2 := #ROBOT.SEND.CALLMASTERJOB;
+	"ByteOUT :0 R1".%X3 := #ROBOT.SEND.ALARMRESET;
+	"ByteOUT :0 R1".%X4 := #ROBOT.SEND.REDUCESPEED;
+	"ByteOUT :0 R1".%X5 := #ROBOT.SEND.BUZZER;
+	"ByteOUT :0 R1".%X6 := #ROBOT.SEND.WATCHDOG;
+	"ByteOUT :0 R1".%X7 := #ROBOT.SEND.LOWAIRPRESSURE;
+	
+	// System byte 1; bits 0..7 follow the supplied robot mapping.
+	"ByteOUT :1 R1".%X0 := #ROBOT.SEND.MACHINELOCK;
+	"ByteOUT :1 R1".%X1 := FALSE; // Reserved system bit.
+	"ByteOUT :1 R1".%X2 := #ROBOT.SEND.EXTERNALHOLD;
+	"ByteOUT :1 R1".%X3 := #ROBOT.SEND.INVALIDCOLLISIONDETECT;
+	"ByteOUT :1 R1".%X4 := #ROBOT.SEND.CONTINUOUSCYCLESELECT;
+	"ByteOUT :1 R1".%X5 := #ROBOT.SEND.ONECYCLESELECT;
+	"ByteOUT :1 R1".%X6 := #ROBOT.SEND.EDITLOCK;
+	"ByteOUT :1 R1".%X7 := #ROBOT.SEND.AUTOBACKUP;
+	
+	// System byte 2; bits 0..7 follow the supplied robot mapping.
+	"ByteOUT :2 R1".%X0 := #ROBOT.SEND.WORKPROHIBIT_R1;
+	"ByteOUT :2 R1".%X1 := #ROBOT.SEND.WORKPROHIBIT_R2;
+	"ByteOUT :2 R1".%X2 := #ROBOT.SEND.WORKPROHIBIT_R3;
+	"ByteOUT :2 R1".%X3 := #ROBOT.SEND.WORKPROHIBIT_R4;
+	"ByteOUT :2 R1".%X4 := #ROBOT.SEND.WORKPROHIBIT_R5;
+	"ByteOUT :2 R1".%X5 := #ROBOT.SEND.WORKPROHIBIT_R6;
+	"ByteOUT :2 R1".%X6 := #ROBOT.SEND.WORKPROHIBIT_R7;
+	"ByteOUT :2 R1".%X7 := #ROBOT.SEND.WORKPROHIBIT_R8;
+	
+	// System byte 3; bits 0..7 follow the supplied robot mapping.
+	"ByteOUT :3 R1".%X0 := #ROBOT.SEND.SEQUENCEWAIT_R1;
+	"ByteOUT :3 R1".%X1 := #ROBOT.SEND.SEQUENCEWAIT_R2;
+	"ByteOUT :3 R1".%X2 := #ROBOT.SEND.SEQUENCEWAIT_R3;
+	"ByteOUT :3 R1".%X3 := #ROBOT.SEND.SEQUENCEWAIT_R4;
+	"ByteOUT :3 R1".%X4 := #ROBOT.SEND.SEQUENCEWAIT_R5;
+	"ByteOUT :3 R1".%X5 := #ROBOT.SEND.SEQUENCEWAIT_R6;
+	"ByteOUT :3 R1".%X6 := #ROBOT.SEND.SEQUENCEWAIT_R7;
+	"ByteOUT :3 R1".%X7 := #ROBOT.SEND.SEQUENCEWAIT_R8;
+	
+	// System byte 4; bits 0..7 follow the supplied robot mapping.
+	"ByteOUT :4 R1".%X0 := #ROBOT.SEND.SEQUENCEWAIT_S1;
+	"ByteOUT :4 R1".%X1 := #ROBOT.SEND.SEQUENCEWAIT_S2;
+	"ByteOUT :4 R1".%X2 := #ROBOT.SEND.SEQUENCEWAIT_S3;
+	"ByteOUT :4 R1".%X3 := #ROBOT.SEND.SEQUENCEWAIT_S4;
+	"ByteOUT :4 R1".%X4 := #ROBOT.SEND.SEQUENCEWAIT_S5;
+	"ByteOUT :4 R1".%X5 := #ROBOT.SEND.SEQUENCEWAIT_S6;
+	"ByteOUT :4 R1".%X6 := #ROBOT.SEND.SEQUENCEWAIT_S7;
+	"ByteOUT :4 R1".%X7 := #ROBOT.SEND.SEQUENCEWAIT_S8;
+	
+	// System byte 5; bits 0..7 follow the supplied robot mapping.
+	"ByteOUT :5 R1".%X0 := #ROBOT.SEND.STEPBACK_R1;
+	"ByteOUT :5 R1".%X1 := #ROBOT.SEND.STEPBACK_R2;
+	"ByteOUT :5 R1".%X2 := #ROBOT.SEND.STEPBACK_R3;
+	"ByteOUT :5 R1".%X3 := #ROBOT.SEND.STEPBACK_R4;
+	"ByteOUT :5 R1".%X4 := #ROBOT.SEND.STEPBACK_R5;
+	"ByteOUT :5 R1".%X5 := #ROBOT.SEND.STEPBACK_R6;
+	"ByteOUT :5 R1".%X6 := #ROBOT.SEND.STEPBACK_R7;
+	"ByteOUT :5 R1".%X7 := #ROBOT.SEND.STEPBACK_R8;
+	
+	//UseBits 
+	//-------------------------------------------------------------------------
+	"ByteOUT :24 R1".%X0 := #ROBOT.SEND.USER_BITS.BUSY;
+	"ByteOUT :24 R1".%X1 := #ROBOT.SEND.USER_BITS.DONE;
+	"ByteOUT :24 R1".%X2 := #ROBOT.SEND.USER_BITS.ERROR;
+	"ByteOUT :24 R1".%X3 := #ROBOT.SEND.USER_BITS.SystemAuto;
+	"ByteOUT :24 R1".%X4 := #ROBOT.SEND.USER_BITS.Bit_4;
+	"ByteOUT :24 R1".%X5 := #ROBOT.SEND.USER_BITS.Bit_5;
+	"ByteOUT :24 R1".%X6 := #ROBOT.SEND.USER_BITS.Bit_6;
+	"ByteOUT :24 R1".%X7 := #ROBOT.SEND.USER_BITS.Bit_7;
+	
+	"ByteOUT :25 R1".%X0 := #ROBOT.SEND.USER_BITS.Bit_8;
+	"ByteOUT :25 R1".%X1 := #ROBOT.SEND.USER_BITS.Bit_9;
+	"ByteOUT :25 R1".%X2 := #ROBOT.SEND.USER_BITS.Bit_10;
+	"ByteOUT :25 R1".%X3 := #ROBOT.SEND.USER_BITS.Bit_11;
+	"ByteOUT :25 R1".%X4 := #ROBOT.SEND.USER_BITS.Bit_12;
+	"ByteOUT :25 R1".%X5 := #ROBOT.SEND.USER_BITS.Bit_13;
+	"ByteOUT :25 R1".%X6 := #ROBOT.SEND.USER_BITS.Bit_14;
+	"ByteOUT :25 R1".%X7 := #ROBOT.SEND.USER_BITS.Bit_15;
+	//-------------------------------------------------------------------------
+	
+	// CMD 
+	"ByteOUT :26 R1" := #ROBOT.SEND.CMD.%B0;
+	"ByteOUT :27 R1" := #ROBOT.SEND.CMD.%B1;
+	
+	// X
+	"ByteOUT :28 R1" := #ROBOT.SEND.X.%B0;
+	"ByteOUT :29 R1" := #ROBOT.SEND.X.%B1;
+	
+	// Y
+	"ByteOUT :30 R1" := #ROBOT.SEND.Y.%B0;
+	"ByteOUT :31 R1" := #ROBOT.SEND.Y.%B1;
+	
+	// Z
+	"ByteOUT :32 R1" := #ROBOT.SEND.Z.%B0;
+	"ByteOUT :33 R1" := #ROBOT.SEND.Z.%B1;
+	
+	//Rz
+	"ByteOUT :34 R1" := #ROBOT.SEND.Rx.%B0;
+	"ByteOUT :35 R1" := #ROBOT.SEND.Rx.%B1;
+	
+	// CMDID
+	"ByteOUT :36 R1" := #ROBOT.SEND.Ry.%B0;
+	"ByteOUT :37 R1" := #ROBOT.SEND.Ry.%B1;
+	
+	// Parameter 1
+	"ByteOUT :38 R1" := #ROBOT.SEND.Rz.%B0;
+	"ByteOUT :39 R1" := #ROBOT.SEND.Rz.%B1;
+	
+	// Parameter 2
+	"ByteOUT :40 R1" := #ROBOT.SEND.CMD_ID.%B0;
+	"ByteOUT :41 R1" := #ROBOT.SEND.CMD_ID.%B1;
+	
+	// Parameter 3
+	"ByteOUT :42 R1" := #ROBOT.SEND.PARAM_3.%B0;
+	"ByteOUT :43 R1" := #ROBOT.SEND.PARAM_3.%B1;
+	
+	// Parameter 4
+	"ByteOUT :44 R1" := #ROBOT.SEND.PARAM_4.%B0;
+	"ByteOUT :45 R1" := #ROBOT.SEND.PARAM_4.%B1;
+	
+	// Parameter 5
+	"ByteOUT :46 R1" := #ROBOT.SEND.PARAM_5.%B0;
+	"ByteOUT :47 R1" := #ROBOT.SEND.PARAM_5.%B1;
+	
+	// Parameter 6
+	"ByteOUT :48 R1" := #ROBOT.SEND.PARAM_6.%B0;
+	"ByteOUT :49 R1" := #ROBOT.SEND.PARAM_6.%B1;
+	
+	// Parameter 7
+	"ByteOUT :50 R1" := #ROBOT.SEND.PARAM_7.%B0;
+	"ByteOUT :51 R1" := #ROBOT.SEND.PARAM_7.%B1;
+	
+	// Parameter 8
+	"ByteOUT :52 R1" := #ROBOT.SEND.PARAM_8.%B0;
+	"ByteOUT :53 R1" := #ROBOT.SEND.PARAM_8.%B1;
+	
+	
+	
+	
+	
+	// Parameter 9
+	"ByteOUT :54 R1" := #ROBOT.SEND.PARAM_9.%B0;
+	"ByteOUT :55 R1" := #ROBOT.SEND.PARAM_9.%B1;
+	// Parameter 10
+	"ByteOUT :56 R1" := #ROBOT.SEND.PARAM_10.%B0;
+	"ByteOUT :57 R1" := #ROBOT.SEND.PARAM_10.%B1;
+	// Parameter 11
+	"ByteOUT :58 R1" := #ROBOT.SEND.PARAM_11.%B0;
+	"ByteOUT :59 R1" := #ROBOT.SEND.PARAM_11.%B1;
+	// Parameter 12
+	"ByteOUT :60 R1" := #ROBOT.SEND.PARAM_12.%B0;
+	"ByteOUT :61 R1" := #ROBOT.SEND.PARAM_12.%B1;
+	"ByteOUT :62 R1" := #ROBOT.SEND.PARAM_BYTE_62; // One-byte parameter.
+	
+	// =============================================================================
+	// ROBOT => PLC
+	// =============================================================================
+	
+	// System byte 0; bits 0..7 follow the supplied robot mapping.
+	#ROBOT.RECEIVE.RUNNING := "ByteIN :0 R1".%X0;
+	#ROBOT.RECEIVE.SERVOISON := "ByteIN :0 R1".%X1;
+	#ROBOT.RECEIVE.TOPMASTERJOB := "ByteIN :0 R1".%X2;
+	#ROBOT.RECEIVE.ALARM := "ByteIN :0 R1".%X3;
+	#ROBOT.RECEIVE.REDUCEDSPEED := "ByteIN :0 R1".%X4;
+	#ROBOT.RECEIVE.REMOTEMODE := "ByteIN :0 R1".%X5;
+	#ROBOT.RECEIVE.PLAYMODE := "ByteIN :0 R1".%X6;
+	#ROBOT.RECEIVE.TEACHMODE := "ByteIN :0 R1".%X7;
+	
+	// System byte 1; bits 0..7 follow the supplied robot mapping.
+	#ROBOT.RECEIVE.BATTERYALARM := "ByteIN :1 R1".%X0;
+	#ROBOT.RECEIVE.WATCHDOG := "ByteIN :1 R1".%X1;
+	#ROBOT.RECEIVE.HOLD := "ByteIN :1 R1".%X2;
+	#ROBOT.RECEIVE.ROBOTCOLLISION := "ByteIN :1 R1".%X3;
+	#ROBOT.RECEIVE.CONTINUOUSCYCLESELECT := "ByteIN :1 R1".%X4;
+	#ROBOT.RECEIVE.ONECYCLESELECT := "ByteIN :1 R1".%X5;
+	#ROBOT.RECEIVE.DIALOGDISPLAYATSTART := "ByteIN :1 R1".%X6;
+	#ROBOT.RECEIVE.ENERGYSAVING := "ByteIN :1 R1".%X7;
+	
+	// System byte 2; bits 0..7 follow the supplied robot mapping.
+	#ROBOT.RECEIVE.MAJORALARM := "ByteIN :2 R1".%X0;
+	#ROBOT.RECEIVE.MINORALARM := "ByteIN :2 R1".%X1;
+	#ROBOT.RECEIVE.SYSTEMALARM := "ByteIN :2 R1".%X2;
+	#ROBOT.RECEIVE.USERALARM := "ByteIN :2 R1".%X3;
+	#ROBOT.RECEIVE.SAFETYPLUGINPUT := "ByteIN :2 R1".%X4;
+	#ROBOT.RECEIVE.EXTERNALEMERGENCYSTOP := "ByteIN :2 R1".%X5;
+	#ROBOT.RECEIVE.TEACHBOXEMERGENCYSTOP := "ByteIN :2 R1".%X6;
+	#ROBOT.RECEIVE.EXTERNALHOLD := "ByteIN :2 R1".%X7;
+	
+	// System byte 3; bits 0..7 follow the supplied robot mapping.
+	#ROBOT.RECEIVE.SHOCKDETECTION_R1 := "ByteIN :3 R1".%X0;
+	#ROBOT.RECEIVE.SHOCKDETECTION_R2 := "ByteIN :3 R1".%X1;
+	#ROBOT.RECEIVE.SHOCKDETECTION_R3 := "ByteIN :3 R1".%X2;
+	#ROBOT.RECEIVE.SHOCKDETECTION_R4 := "ByteIN :3 R1".%X3;
+	#ROBOT.RECEIVE.SHOCKDETECTION_R5 := "ByteIN :3 R1".%X4;
+	#ROBOT.RECEIVE.SHOCKDETECTION_R6 := "ByteIN :3 R1".%X5;
+	#ROBOT.RECEIVE.SHOCKDETECTION_R7 := "ByteIN :3 R1".%X6;
+	#ROBOT.RECEIVE.SHOCKDETECTION_R8 := "ByteIN :3 R1".%X7;
+	
+	// System byte 4; bits 0..7 follow the supplied robot mapping.
+	#ROBOT.RECEIVE.INCUBE_1 := "ByteIN :4 R1".%X0;
+	#ROBOT.RECEIVE.INCUBE_2 := "ByteIN :4 R1".%X1;
+	#ROBOT.RECEIVE.INCUBE_3 := "ByteIN :4 R1".%X2;
+	#ROBOT.RECEIVE.INCUBE_4 := "ByteIN :4 R1".%X3;
+	#ROBOT.RECEIVE.INCUBE_5 := "ByteIN :4 R1".%X4;
+	#ROBOT.RECEIVE.INCUBE_6 := "ByteIN :4 R1".%X5;
+	#ROBOT.RECEIVE.INCUBE_7 := "ByteIN :4 R1".%X6;
+	#ROBOT.RECEIVE.INCUBE_8 := "ByteIN :4 R1".%X7;
+	
+	// System byte 5; bits 0..7 follow the supplied robot mapping.
+	#ROBOT.RECEIVE.INCUBE_9 := "ByteIN :5 R1".%X0;
+	#ROBOT.RECEIVE.INCUBE_10 := "ByteIN :5 R1".%X1;
+	#ROBOT.RECEIVE.INCUBE_11 := "ByteIN :5 R1".%X2;
+	#ROBOT.RECEIVE.INCUBE_12 := "ByteIN :5 R1".%X3;
+	#ROBOT.RECEIVE.INCUBE_13 := "ByteIN :5 R1".%X4;
+	#ROBOT.RECEIVE.INCUBE_14 := "ByteIN :5 R1".%X5;
+	#ROBOT.RECEIVE.INCUBE_15 := "ByteIN :5 R1".%X6;
+	#ROBOT.RECEIVE.INCUBE_16 := "ByteIN :5 R1".%X7;
+	
+	// Busy,Done,Error Bits 
+	#ROBOT.RECEIVE.USER_BITS.BUSY := "ByteIN :24 R1".%X0;
+	#ROBOT.RECEIVE.USER_BITS.DONE := "ByteIN :24 R1".%X1;
+	#ROBOT.RECEIVE.USER_BITS.ERROR := "ByteIN :24 R1".%X2;
+	#ROBOT.RECEIVE.USER_BITS.Bit_3 := "ByteIN :24 R1".%X3;
+	#ROBOT.RECEIVE.USER_BITS.Bit_4 := "ByteIN :24 R1".%X4;
+	#ROBOT.RECEIVE.USER_BITS.Bit_5 := "ByteIN :24 R1".%X5;
+	#ROBOT.RECEIVE.USER_BITS.Bit_6 := "ByteIN :24 R1".%X6;
+	#ROBOT.RECEIVE.USER_BITS.Bit_7 := "ByteIN :24 R1".%X7;
+	
+	#ROBOT.RECEIVE.USER_BITS.Bit_8 := "ByteIN :25 R1".%X0;
+	#ROBOT.RECEIVE.USER_BITS.Bit_9 := "ByteIN :25 R1".%X1;
+	#ROBOT.RECEIVE.USER_BITS.Bit_10 := "ByteIN :25 R1".%X2;
+	#ROBOT.RECEIVE.USER_BITS.Bit_11 := "ByteIN :25 R1".%X3;
+	#ROBOT.RECEIVE.USER_BITS.Bit_12 := "ByteIN :25 R1".%X4;
+	#ROBOT.RECEIVE.USER_BITS.Bit_13 := "ByteIN :25 R1".%X5;
+	#ROBOT.RECEIVE.USER_BITS.Bit_14 := "ByteIN :25 R1".%X6;
+	#ROBOT.RECEIVE.USER_BITS.Bit_15 := "ByteIN :25 R1".%X7;
+	
+	// X
+	#ROBOT.RECEIVE.ACT_X.%B0 := "ByteIN :26 R1";
+	#ROBOT.RECEIVE.ACT_X.%B1 := "ByteIN :27 R1";
+	
+	// Y
+	#ROBOT.RECEIVE.ACT_Y.%B0 := "ByteIN :28 R1";
+	#ROBOT.RECEIVE.ACT_Y.%B1 := "ByteIN :29 R1";
+	
+	// Z
+	#ROBOT.RECEIVE.ACT_Z.%B0 := "ByteIN :30 R1";
+	#ROBOT.RECEIVE.ACT_Z.%B1 := "ByteIN :31 R1";
+	
+	// Rz
+	#ROBOT.RECEIVE.ACT_Rz.%B0 := "ByteIN :32 R1";
+	#ROBOT.RECEIVE.ACT_Rz.%B1 := "ByteIN :33 R1";
+	
+	// ACTCMDID
+	#ROBOT.RECEIVE.ACT_CMDID.%B0 := "ByteIN :34 R1";
+	#ROBOT.RECEIVE.ACT_CMDID.%B1 := "ByteIN :35 R1";
+	
+	// Parameter 1
+	#ROBOT.RECEIVE.PARAM_1.%B0 := "ByteIN :36 R1";
+	#ROBOT.RECEIVE.PARAM_1.%B1 := "ByteIN :37 R1";
+	
+	// Parameter 2
+	#ROBOT.RECEIVE.PARAM_2.%B0 := "ByteIN :38 R1";
+	#ROBOT.RECEIVE.PARAM_2.%B1 := "ByteIN :39 R1";
+	
+	// Parameter 3 
+	#ROBOT.RECEIVE.PARAM_3.%B0 := "ByteIN :40 R1";
+	#ROBOT.RECEIVE.PARAM_3.%B1 := "ByteIN :41 R1";
+	
+	// Parameter 4 
+	#ROBOT.RECEIVE.PARAM_4.%B0 := "ByteIN :42 R1";
+	#ROBOT.RECEIVE.PARAM_4.%B1 := "ByteIN :43 R1";
+	
+	// Parameter 5 
+	#ROBOT.RECEIVE.PARAM_5.%B0 := "ByteIN :44 R1";
+	#ROBOT.RECEIVE.PARAM_5.%B1 := "ByteIN :45 R1";
+	
+	// Parameter 6 
+	#ROBOT.RECEIVE.PARAM_6.%B0 := "ByteIN :46 R1";
+	#ROBOT.RECEIVE.PARAM_6.%B1 := "ByteIN :47 R1";
+	
+	// Parameter 7 
+	#ROBOT.RECEIVE.PARAM_7.%B0 := "ByteIN :48 R1";
+	#ROBOT.RECEIVE.PARAM_7.%B1 := "ByteIN :49 R1";
+	
+	// Parameter 8 
+	#ROBOT.RECEIVE.PARAM_8.%B0 := "ByteIN :50 R1";
+	#ROBOT.RECEIVE.PARAM_8.%B1 := "ByteIN :51 R1";
+	
+	// Parameter 9 
+	#ROBOT.RECEIVE.PARAM_9.%B0 := "ByteIN :52 R1";
+	#ROBOT.RECEIVE.PARAM_9.%B1 := "ByteIN :53 R1";
+	
+	
+	
+	// =============================================================================
+	// Parameter 10
+	#ROBOT.RECEIVE.PARAM_10.%B0 := "ByteIN :54 R1";
+	#ROBOT.RECEIVE.PARAM_10.%B1 := "ByteIN :55 R1";
+	// Parameter 11
+	#ROBOT.RECEIVE.PARAM_11.%B0 := "ByteIN :56 R1";
+	#ROBOT.RECEIVE.PARAM_11.%B1 := "ByteIN :57 R1";
+	// Parameter 12
+	#ROBOT.RECEIVE.PARAM_12.%B0 := "ByteIN :58 R1";
+	#ROBOT.RECEIVE.PARAM_12.%B1 := "ByteIN :59 R1";
+	// Parameter 13
+	#ROBOT.RECEIVE.PARAM_13.%B0 := "ByteIN :60 R1";
+	#ROBOT.RECEIVE.PARAM_13.%B1 := "ByteIN :61 R1";
+	#ROBOT.RECEIVE.PARAM_BYTE_62 := "ByteIN :62 R1"; // One-byte parameter.
+END_FUNCTION
+

@@ -1,0 +1,62 @@
+﻿FUNCTION "FC_InvCtrl" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      id : Int;
+      Hz : Real;
+   END_VAR
+
+   VAR_TEMP 
+      CmdVelocity : UInt;
+      Cmd : Word;
+      xForw : Bool;
+      xRev : Bool;
+   END_VAR
+
+
+BEGIN
+	// =============================================================================
+	// OCTOPUS AUTOMATION
+	// (C) 2026
+	// =============================================================================
+	// Project: TMP_A-1
+	// Module: -
+	// 
+	// POU: FC_InvCtrl
+	// -----------------------------------------------------------------------------
+	// Conveyor Inverter Control (via profinet)
+	// -----------------------------------------------------------------------------
+	// Date         Version             Author      Modification
+	// 21.09.26     TMP_A-1             A.M         Created
+	// =============================================================================
+	
+	// -----------------------------------------------------------------------------
+	// NOTE: InvX_CmdVelocity in 1/100 Hz
+	// -----------------------------------------------------------------------------
+	
+	// IF NOT "SAF".DI_Master_HipoOk THEN
+	//     "FC_InvStopAll"();
+	//     RETURN;
+	// END_IF;
+	
+	#CmdVelocity := REAL_TO_UINT(ABS(#Hz * REAL#100.0));
+	#xForw := #Hz > REAL#1.0;
+	#xRev := #Hz < - REAL#1.0;
+	
+	#Cmd := "INV_CMD_STOP";
+	IF #xForw THEN
+	    #Cmd := "INV_CMD_FORW";
+	END_IF;
+	IF #xRev THEN
+	    #Cmd := "INV_CMD_REV";
+	END_IF;
+	
+	CASE #id OF
+	    1:
+	        "INV_CmdVelocity" := #CmdVelocity;
+	        "INV_CMD" := #Cmd;
+	END_CASE;
+	
+	    
+END_FUNCTION
+
